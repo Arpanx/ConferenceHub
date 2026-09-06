@@ -132,7 +132,7 @@ public class HallService : IHallService
 
         foreach (var service in services)
         {
-            _context.HallServices.Add(new HallService
+            _context.HallServices.Add(new ConferenceHub.Models.HallService
             {
                 HallId = hall.Id,
                 ServiceId = service.Id
@@ -187,7 +187,7 @@ public class HallService : IHallService
 
         foreach (var service in services)
         {
-            _context.HallServices.Add(new HallService
+            _context.HallServices.Add(new ConferenceHub.Models.HallService
             {
                 HallId = hall.Id,
                 ServiceId = service.Id

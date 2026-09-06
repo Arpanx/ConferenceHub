@@ -145,7 +145,7 @@ public class BookingService : IBookingService
         foreach (var service in availableServices)
         {
             booking.BookingServices.Add(
-                new BookingService
+                new ConferenceHub.Models.BookingService
                 {
                     ServiceId = service.Id,
                     Price = service.Price
