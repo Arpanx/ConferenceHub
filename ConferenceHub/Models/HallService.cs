@@ -1,4 +1,4 @@
-﻿namespace ConferenceHub.Models.Services
+﻿namespace ConferenceHub.Models
 {
     public class HallService
     {

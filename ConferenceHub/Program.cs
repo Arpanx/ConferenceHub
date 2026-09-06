@@ -1,9 +1,16 @@
+using ConferenceHub.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ConferenceHubDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ConferenceHub")));
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
 
 var app = builder.Build();
 
