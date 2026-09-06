@@ -27,4 +27,10 @@ public interface IHallService
     Task<bool> DeleteAsync(
         int id,
         CancellationToken cancellationToken = default);
+
+    Task<List<HallDto>> GetAvailableAsync(
+        DateTime startTime,
+        TimeSpan duration,
+        int capacity,
+        CancellationToken cancellationToken = default);
 }

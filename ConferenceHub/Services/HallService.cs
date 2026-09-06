@@ -263,4 +263,65 @@ public class HallService : IHallService
                 "INVALID_HALL_PRICE");
         }
     }
+
+    public async Task<List<HallDto>> GetAvailableAsync(
+        DateTime startTime,
+        TimeSpan duration,
+        int capacity,
+        CancellationToken cancellationToken = default)
+    {
+        if (duration <= TimeSpan.Zero)
+        {
+            throw new BusinessException(
+                "Booking duration must be greater than zero.",
+                "INVALID_DURATION");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new BusinessException(
+                "Capacity must be greater than zero.",
+                "INVALID_CAPACITY");
+        }
+
+        var endTime = startTime + duration;
+
+        if (endTime <= startTime)
+        {
+            throw new BusinessException(
+                "Booking end time must be greater than start time.",
+                "INVALID_TIME_RANGE");
+        }
+
+        var halls = await _context.Halls
+            .Where(x =>
+                x.IsActive &&
+                x.Capacity >= capacity)
+            .Where(hall =>
+                !_context.Bookings.Any(booking =>
+                    booking.HallId == hall.Id &&
+                    booking.StartTime < endTime &&
+                    booking.EndTime > startTime))
+            .Select(hall => new HallDto
+            {
+                Id = hall.Id,
+                Name = hall.Name,
+                Capacity = hall.Capacity,
+                BaseHourlyRate = hall.BaseHourlyRate,
+                IsActive = hall.IsActive,
+
+                Services = hall.HallServices
+                    .Where(x => x.Service.IsActive)
+                    .Select(x => new ServiceDto
+                    {
+                        Id = x.Service.Id,
+                        Name = x.Service.Name,
+                        Price = x.Service.Price
+                    })
+                    .ToList()
+            })
+            .ToListAsync(cancellationToken);
+
+        return halls;
+    }
 }

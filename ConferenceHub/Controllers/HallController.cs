@@ -114,4 +114,20 @@ public class HallController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("available")]
+    public async Task<ActionResult<List<HallDto>>> GetAvailableHalls(
+    [FromQuery] DateTime startTime,
+    [FromQuery] TimeSpan duration,
+    [FromQuery] int capacity,
+    CancellationToken cancellationToken)
+    {
+        var halls = await _hallService.GetAvailableAsync(
+            startTime,
+            duration,
+            capacity,
+            cancellationToken);
+
+        return Ok(halls);
+    }
 }
