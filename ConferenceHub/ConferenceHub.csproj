@@ -20,10 +20,6 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Models\Services\" />
-	</ItemGroup>
-
 	<!-- Build Angular before publishing -->
 	<Target Name="BuildAngular" BeforeTargets="Publish">
 

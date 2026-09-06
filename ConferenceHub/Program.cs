@@ -1,4 +1,6 @@
 using ConferenceHub.Data;
+using ConferenceHub.Exceptions;
+using ConferenceHub.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,10 +21,21 @@ else
 }
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IHallService, HallService>();
+
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPricingService, PricingService>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddOpenApi();
 
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // =========================
 // Database seeding

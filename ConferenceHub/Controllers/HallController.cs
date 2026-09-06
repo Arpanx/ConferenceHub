@@ -1,8 +1,6 @@
-﻿using ConferenceHub.Data;
-using ConferenceHub.Models;
-using ConferenceHub.Models.Dtos;
+﻿using ConferenceHub.Models.Dtos;
+using ConferenceHub.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceHub.Controllers;
 
@@ -10,11 +8,11 @@ namespace ConferenceHub.Controllers;
 [Route("api/[controller]")]
 public class HallController : ControllerBase
 {
-    private readonly ConferenceHubDbContext _context;
+    private readonly IHallService _hallService;
 
-    public HallController(ConferenceHubDbContext context)
+    public HallController(IHallService hallService)
     {
-        _context = context;
+        _hallService = hallService;
     }
 
     // GET: api/hall
@@ -22,30 +20,7 @@ public class HallController : ControllerBase
     public async Task<ActionResult<List<HallDto>>> GetHalls(
         CancellationToken cancellationToken)
     {
-        var halls = await _context.Halls
-            .AsNoTracking()
-            .Include(x => x.HallServices)
-                .ThenInclude(x => x.Service)
-            .OrderBy(x => x.Name)
-            .Select(x => new HallDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Capacity = x.Capacity,
-                BaseHourlyRate = x.BaseHourlyRate,
-                IsActive = x.IsActive,
-
-                Services = x.HallServices
-                    .Where(hs => hs.Service.IsActive)
-                    .Select(hs => new ServiceDto
-                    {
-                        Id = hs.Service.Id,
-                        Name = hs.Service.Name,
-                        Price = hs.Service.Price
-                    })
-                    .ToList()
-            })
-            .ToListAsync(cancellationToken);
+        var halls = await _hallService.GetAllAsync(cancellationToken);
 
         return Ok(halls);
     }
@@ -56,30 +31,9 @@ public class HallController : ControllerBase
         int id,
         CancellationToken cancellationToken)
     {
-        var hall = await _context.Halls
-            .AsNoTracking()
-            .Include(x => x.HallServices)
-                .ThenInclude(x => x.Service)
-            .Where(x => x.Id == id)
-            .Select(x => new HallDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Capacity = x.Capacity,
-                BaseHourlyRate = x.BaseHourlyRate,
-                IsActive = x.IsActive,
-
-                Services = x.HallServices
-                    .Where(hs => hs.Service.IsActive)
-                    .Select(hs => new ServiceDto
-                    {
-                        Id = hs.Service.Id,
-                        Name = hs.Service.Name,
-                        Price = hs.Service.Price
-                    })
-                    .ToList()
-            })
-            .FirstOrDefaultAsync(cancellationToken);
+        var hall = await _hallService.GetByIdAsync(
+            id,
+            cancellationToken);
 
         if (hall is null)
         {
@@ -95,27 +49,14 @@ public class HallController : ControllerBase
         int id,
         CancellationToken cancellationToken)
     {
-        var hallExists = await _context.Halls
-            .AnyAsync(x => x.Id == id, cancellationToken);
+        var services = await _hallService.GetServicesAsync(
+            id,
+            cancellationToken);
 
-        if (!hallExists)
+        if (services is null)
         {
             return NotFound();
         }
-
-        var services = await _context.HallServices
-            .AsNoTracking()
-            .Where(x =>
-                x.HallId == id &&
-                x.Service.IsActive)
-            .Select(x => new ServiceDto
-            {
-                Id = x.Service.Id,
-                Name = x.Service.Name,
-                Price = x.Service.Price
-            })
-            .OrderBy(x => x.Name)
-            .ToListAsync(cancellationToken);
 
         return Ok(services);
     }
@@ -126,67 +67,14 @@ public class HallController : ControllerBase
         [FromBody] CreateHallDto model,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(model.Name))
-        {
-            return BadRequest("Hall name is required.");
-        }
-
-        if (model.Capacity <= 0)
-        {
-            return BadRequest("Capacity must be greater than zero.");
-        }
-
-        if (model.BaseHourlyRate < 0)
-        {
-            return BadRequest("Base hourly rate cannot be negative.");
-        }
-
-        var serviceIds = model.ServiceIds
-            .Distinct()
-            .ToList();
-
-        var services = await _context.Services
-            .Where(x =>
-                serviceIds.Contains(x.Id) &&
-                x.IsActive)
-            .ToListAsync(cancellationToken);
-
-        if (services.Count != serviceIds.Count)
-        {
-            return BadRequest("One or more services do not exist or are inactive.");
-        }
-
-        var hall = new Hall
-        {
-            Name = model.Name.Trim(),
-            Capacity = model.Capacity,
-            BaseHourlyRate = model.BaseHourlyRate,
-            IsActive = true
-        };
-
-        _context.Halls.Add(hall);
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        foreach (var service in services)
-        {
-            _context.HallServices.Add(new HallService
-            {
-                HallId = hall.Id,
-                ServiceId = service.Id
-            });
-        }
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        var result = await GetHallDtoAsync(
-            hall.Id,
+        var hall = await _hallService.CreateAsync(
+            model,
             cancellationToken);
 
         return CreatedAtAction(
             nameof(GetHall),
             new { id = hall.Id },
-            result);
+            hall);
     }
 
     // PUT: api/hall/1
@@ -196,72 +84,17 @@ public class HallController : ControllerBase
         [FromBody] UpdateHallDto model,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(model.Name))
-        {
-            return BadRequest("Hall name is required.");
-        }
-
-        if (model.Capacity <= 0)
-        {
-            return BadRequest("Capacity must be greater than zero.");
-        }
-
-        if (model.BaseHourlyRate < 0)
-        {
-            return BadRequest("Base hourly rate cannot be negative.");
-        }
-
-        var hall = await _context.Halls
-            .Include(x => x.HallServices)
-            .FirstOrDefaultAsync(
-                x => x.Id == id,
-                cancellationToken);
+        var hall = await _hallService.UpdateAsync(
+            id,
+            model,
+            cancellationToken);
 
         if (hall is null)
         {
             return NotFound();
         }
 
-        var serviceIds = model.ServiceIds
-            .Distinct()
-            .ToList();
-
-        var services = await _context.Services
-            .Where(x =>
-                serviceIds.Contains(x.Id) &&
-                x.IsActive)
-            .ToListAsync(cancellationToken);
-
-        if (services.Count != serviceIds.Count)
-        {
-            return BadRequest("One or more services do not exist or are inactive.");
-        }
-
-        hall.Name = model.Name.Trim();
-        hall.Capacity = model.Capacity;
-        hall.BaseHourlyRate = model.BaseHourlyRate;
-        hall.IsActive = model.IsActive;
-
-        // Удаляем старые связи.
-        _context.HallServices.RemoveRange(hall.HallServices);
-
-        // Создаём новые.
-        foreach (var service in services)
-        {
-            _context.HallServices.Add(new HallService
-            {
-                HallId = hall.Id,
-                ServiceId = service.Id
-            });
-        }
-
-        await _context.SaveChangesAsync(cancellationToken);
-
-        var result = await GetHallDtoAsync(
-            hall.Id,
-            cancellationToken);
-
-        return Ok(result);
+        return Ok(hall);
     }
 
     // DELETE: api/hall/1
@@ -270,49 +103,15 @@ public class HallController : ControllerBase
         int id,
         CancellationToken cancellationToken)
     {
-        var hall = await _context.Halls
-            .FirstOrDefaultAsync(
-                x => x.Id == id,
-                cancellationToken);
+        var deleted = await _hallService.DeleteAsync(
+            id,
+            cancellationToken);
 
-        if (hall is null)
+        if (!deleted)
         {
             return NotFound();
         }
 
-        // Пока используем soft delete.
-        hall.IsActive = false;
-
-        await _context.SaveChangesAsync(cancellationToken);
-
         return NoContent();
-    }
-
-    private async Task<HallDto?> GetHallDtoAsync(
-        int id,
-        CancellationToken cancellationToken)
-    {
-        return await _context.Halls
-            .AsNoTracking()
-            .Where(x => x.Id == id)
-            .Select(x => new HallDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Capacity = x.Capacity,
-                BaseHourlyRate = x.BaseHourlyRate,
-                IsActive = x.IsActive,
-
-                Services = x.HallServices
-                    .Where(hs => hs.Service.IsActive)
-                    .Select(hs => new ServiceDto
-                    {
-                        Id = hs.Service.Id,
-                        Name = hs.Service.Name,
-                        Price = hs.Service.Price
-                    })
-                    .ToList()
-            })
-            .FirstOrDefaultAsync(cancellationToken);
     }
 }
