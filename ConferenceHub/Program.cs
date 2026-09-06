@@ -24,6 +24,9 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// =========================
+// Database seeding
+// =========================
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider
@@ -32,7 +35,9 @@ using (var scope = app.Services.CreateScope())
     await DatabaseSeeder.SeedAsync(dbContext);
 }
 
-// Configure the HTTP request pipeline.
+// =========================
+// HTTP pipeline
+// =========================
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

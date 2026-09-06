@@ -9,57 +9,85 @@ public static class DatabaseSeeder
         ConferenceHubDbContext context,
         CancellationToken cancellationToken = default)
     {
+        // Не создаём дубликаты при повторном запуске приложения.
         if (await context.Halls.AnyAsync(cancellationToken))
         {
             return;
         }
 
+        // =========================
+        // Services
+        // =========================
+
         var projector = new Service
         {
             Name = "Проєктор",
-            Price = 500m
+            Price = 500m,
+            IsActive = true
         };
 
         var wifi = new Service
         {
             Name = "Wi-Fi",
-            Price = 300m
+            Price = 300m,
+            IsActive = true
         };
 
         var sound = new Service
         {
             Name = "Звук",
-            Price = 700m
+            Price = 700m,
+            IsActive = true
         };
 
-        context.Services.AddRange(projector, wifi, sound);
+        context.Services.AddRange(
+            projector,
+            wifi,
+            sound);
+
+        // =========================
+        // Halls
+        // =========================
 
         var hallA = new Hall
         {
             Name = "Зал А",
             Capacity = 50,
-            BaseHourlyRate = 2000m
+            BaseHourlyRate = 2000m,
+            IsActive = true
         };
 
         var hallB = new Hall
         {
             Name = "Зал B",
             Capacity = 100,
-            BaseHourlyRate = 3500m
+            BaseHourlyRate = 3500m,
+            IsActive = true
         };
 
         var hallC = new Hall
         {
             Name = "Зал C",
             Capacity = 30,
-            BaseHourlyRate = 1500m
+            BaseHourlyRate = 1500m,
+            IsActive = true
         };
 
-        context.Halls.AddRange(hallA, hallB, hallC);
+        context.Halls.AddRange(
+            hallA,
+            hallB,
+            hallC);
 
+        // Сначала сохраняем основные сущности,
+        // чтобы получить их ID.
         await context.SaveChangesAsync(cancellationToken);
 
+        // =========================
+        // Hall services
+        // =========================
+
         context.HallServices.AddRange(
+            // Зал А
             new HallService
             {
                 HallId = hallA.Id,
@@ -76,6 +104,7 @@ public static class DatabaseSeeder
                 ServiceId = sound.Id
             },
 
+            // Зал B
             new HallService
             {
                 HallId = hallB.Id,
@@ -92,6 +121,7 @@ public static class DatabaseSeeder
                 ServiceId = sound.Id
             },
 
+            // Зал C
             new HallService
             {
                 HallId = hallC.Id,
@@ -101,8 +131,12 @@ public static class DatabaseSeeder
             {
                 HallId = hallC.Id,
                 ServiceId = wifi.Id
-            }
-        );
+            },
+            new HallService
+            {
+                HallId = hallC.Id,
+                ServiceId = sound.Id
+            });
 
         await context.SaveChangesAsync(cancellationToken);
     }
