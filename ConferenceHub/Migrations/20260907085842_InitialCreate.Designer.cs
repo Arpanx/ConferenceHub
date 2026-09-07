@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConferenceHub.Migrations
 {
     [DbContext(typeof(ConferenceHubDbContext))]
-    [Migration("20260907085355_RenameServiceToAdditionalService")]
-    partial class RenameServiceToAdditionalService
+    [Migration("20260907085842_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,7 +80,7 @@ namespace ConferenceHub.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionaService", b =>
+            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionalService", b =>
                 {
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
@@ -152,7 +152,7 @@ namespace ConferenceHub.Migrations
                     b.Navigation("Hall");
                 });
 
-            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionaService", b =>
+            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionalService", b =>
                 {
                     b.HasOne("ConferenceHub.Models.Booking", "Booking")
                         .WithMany("BookingServices")

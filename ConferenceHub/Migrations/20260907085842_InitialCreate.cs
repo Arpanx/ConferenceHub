@@ -12,6 +12,21 @@ namespace ConferenceHub.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AdditionalServices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdditionalServices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Halls",
                 columns: table => new
                 {
@@ -25,21 +40,6 @@ namespace ConferenceHub.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Halls", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Services",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Services", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,21 +70,21 @@ namespace ConferenceHub.Migrations
                 columns: table => new
                 {
                     HallId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false)
+                    AdditionalServiceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HallServices", x => new { x.HallId, x.ServiceId });
+                    table.PrimaryKey("PK_HallServices", x => new { x.HallId, x.AdditionalServiceId });
+                    table.ForeignKey(
+                        name: "FK_HallServices_AdditionalServices_AdditionalServiceId",
+                        column: x => x.AdditionalServiceId,
+                        principalTable: "AdditionalServices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_HallServices_Halls_HallId",
                         column: x => x.HallId,
                         principalTable: "Halls",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_HallServices_Services_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Services",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -101,15 +101,15 @@ namespace ConferenceHub.Migrations
                 {
                     table.PrimaryKey("PK_BookingServices", x => new { x.BookingId, x.ServiceId });
                     table.ForeignKey(
-                        name: "FK_BookingServices_Bookings_BookingId",
-                        column: x => x.BookingId,
-                        principalTable: "Bookings",
+                        name: "FK_BookingServices_AdditionalServices_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "AdditionalServices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BookingServices_Services_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Services",
+                        name: "FK_BookingServices_Bookings_BookingId",
+                        column: x => x.BookingId,
+                        principalTable: "Bookings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -125,9 +125,9 @@ namespace ConferenceHub.Migrations
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HallServices_ServiceId",
+                name: "IX_HallServices_AdditionalServiceId",
                 table: "HallServices",
-                column: "ServiceId");
+                column: "AdditionalServiceId");
         }
 
         /// <inheritdoc />
@@ -143,7 +143,7 @@ namespace ConferenceHub.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
-                name: "Services");
+                name: "AdditionalServices");
 
             migrationBuilder.DropTable(
                 name: "Halls");

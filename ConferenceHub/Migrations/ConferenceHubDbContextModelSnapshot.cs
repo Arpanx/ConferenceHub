@@ -77,7 +77,7 @@ namespace ConferenceHub.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionaService", b =>
+            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionalService", b =>
                 {
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
@@ -149,7 +149,7 @@ namespace ConferenceHub.Migrations
                     b.Navigation("Hall");
                 });
 
-            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionaService", b =>
+            modelBuilder.Entity("ConferenceHub.Models.BookingAdditionalService", b =>
                 {
                     b.HasOne("ConferenceHub.Models.Booking", "Booking")
                         .WithMany("BookingServices")
