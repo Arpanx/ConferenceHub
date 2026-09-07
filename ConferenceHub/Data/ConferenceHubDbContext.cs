@@ -44,7 +44,7 @@ public class ConferenceHubDbContext : DbContext
             .HasKey(x => new
             {
                 x.HallId,
-                x.ServiceId
+                x.AdditionalServiceId
             });
 
         modelBuilder.Entity<HallAdditionalService>()
@@ -53,9 +53,9 @@ public class ConferenceHubDbContext : DbContext
             .HasForeignKey(x => x.HallId);
 
         modelBuilder.Entity<HallAdditionalService>()
-            .HasOne(x => x.Service)
+            .HasOne(x => x.AdditionalService)
             .WithMany(x => x.HallServices)
-            .HasForeignKey(x => x.ServiceId);
+            .HasForeignKey(x => x.AdditionalServiceId);
 
         modelBuilder.Entity<BookingAdditionaService>()
             .HasKey(x => new

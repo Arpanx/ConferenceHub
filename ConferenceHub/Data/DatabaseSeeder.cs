@@ -91,51 +91,46 @@ public static class DatabaseSeeder
             new HallAdditionalService
             {
                 HallId = hallA.Id,
-                ServiceId = projector.Id
+                AdditionalServiceId = projector.Id
             },
             new HallAdditionalService
             {
                 HallId = hallA.Id,
-                ServiceId = wifi.Id
+                AdditionalServiceId = wifi.Id
             },
             new HallAdditionalService
             {
                 HallId = hallA.Id,
-                ServiceId = sound.Id
+                AdditionalServiceId = sound.Id
             },
 
             // Зал B
             new HallAdditionalService
             {
                 HallId = hallB.Id,
-                ServiceId = projector.Id
+                AdditionalServiceId = projector.Id
             },
             new HallAdditionalService
             {
                 HallId = hallB.Id,
-                ServiceId = wifi.Id
-            },
-            new HallAdditionalService
-            {
-                HallId = hallB.Id,
-                ServiceId = sound.Id
+                AdditionalServiceId = sound.Id
             },
 
             // Зал C
             new HallAdditionalService
             {
                 HallId = hallC.Id,
-                ServiceId = projector.Id
+                AdditionalServiceId = projector.Id
             },
             new HallAdditionalService
             {
                 HallId = hallC.Id,
-                ServiceId = wifi.Id
+                AdditionalServiceId = wifi.Id
             },
             new HallAdditionalService
             {
                 HallId = hallC.Id,
-                ServiceId = sound.Id
+                AdditionalServiceId = sound.Id
             });
 
         await context.SaveChangesAsync(cancellationToken);

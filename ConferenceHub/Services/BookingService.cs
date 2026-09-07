@@ -49,7 +49,7 @@ public class BookingService : IBookingAdditionaService
 
         var hall = await _context.Halls
             .Include(x => x.HallServices)
-            .ThenInclude(x => x.Service)
+            .ThenInclude(x => x.AdditionalService)
             .FirstOrDefaultAsync(
                 x => x.Id == model.HallId,
                 cancellationToken);
@@ -100,9 +100,9 @@ public class BookingService : IBookingAdditionaService
 
         var availableServices = hall.HallServices
             .Where(x =>
-                x.Service.IsActive &&
-                requestedServiceIds.Contains(x.ServiceId))
-            .Select(x => x.Service)
+                x.AdditionalService.IsActive &&
+                requestedServiceIds.Contains(x.AdditionalServiceId))
+            .Select(x => x.AdditionalService)
             .ToList();
 
         if (availableServices.Count != requestedServiceIds.Count)
