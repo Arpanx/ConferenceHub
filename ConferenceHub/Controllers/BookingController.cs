@@ -12,9 +12,9 @@ namespace ConferenceHub.Controllers;
 [Route("api/[controller]")]
 public class BookingController : ControllerBase
 {
-    private readonly IBookingService _bookingService;
+    private readonly IBookingAdditionaService _bookingService;
 
-    public BookingController(IBookingService bookingService)
+    public BookingController(IBookingAdditionaService bookingService)
     {
         _bookingService = bookingService;
     }

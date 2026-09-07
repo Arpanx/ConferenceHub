@@ -2,7 +2,7 @@
 
 namespace ConferenceHub.Services;
 
-public interface IHallService
+public interface IHallAdditionalService
 {
     Task<List<HallDto>> GetAllAsync(
         CancellationToken cancellationToken = default);

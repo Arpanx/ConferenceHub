@@ -12,6 +12,6 @@
 
         public ICollection<HallService> HallServices { get; set; } = new List<HallService>();
 
-        public ICollection<BookingService> BookingServices { get; set; } = new List<BookingService>();
+        public ICollection<BookingAdditionaService> BookingServices { get; set; } = new List<BookingAdditionaService>();
     }
 }

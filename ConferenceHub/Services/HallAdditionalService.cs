@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceHub.Services;
 
-public class HallService : IHallService
+public class HallAdditionalService : IHallAdditionalService
 {
     private readonly ConferenceHubDbContext _context;
 
-    public HallService(ConferenceHubDbContext context)
+    public HallAdditionalService(ConferenceHubDbContext context)
     {
         _context = context;
     }

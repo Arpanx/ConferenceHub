@@ -16,6 +16,6 @@
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<BookingService> BookingServices { get; set; } = new List<BookingService>();
+        public ICollection<BookingAdditionaService> BookingServices { get; set; } = new List<BookingAdditionaService>();
     }
 }

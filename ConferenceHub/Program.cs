@@ -23,9 +23,9 @@ else
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IHallService, HallService>();
+builder.Services.AddScoped<IHallAdditionalService, HallAdditionalService>();
 
-builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IBookingAdditionaService, BookingService>();
 builder.Services.AddScoped<IPricingService, PricingService>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

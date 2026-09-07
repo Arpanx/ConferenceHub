@@ -1,6 +1,6 @@
 ﻿namespace ConferenceHub.Models
 {
-    public class BookingService
+    public class BookingAdditionaService
     {
         public int BookingId { get; set; }
 
