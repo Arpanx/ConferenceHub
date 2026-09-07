@@ -32,6 +32,8 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddOpenApi();
 
+builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -53,7 +55,10 @@ using (var scope = app.Services.CreateScope())
 // =========================
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // https://localhost:7154/swagger
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    //app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
