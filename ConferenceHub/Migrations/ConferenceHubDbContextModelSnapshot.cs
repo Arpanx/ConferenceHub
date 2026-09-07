@@ -82,16 +82,16 @@ namespace ConferenceHub.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int>("AdditionalServiceId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("BookingId", "ServiceId");
+                    b.HasKey("BookingId", "AdditionalServiceId");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("AdditionalServiceId");
 
                     b.ToTable("BookingServices");
                 });
@@ -151,21 +151,21 @@ namespace ConferenceHub.Migrations
 
             modelBuilder.Entity("ConferenceHub.Models.BookingAdditionalService", b =>
                 {
+                    b.HasOne("ConferenceHub.Models.AdditionalService", "AdditionalService")
+                        .WithMany("BookingServices")
+                        .HasForeignKey("AdditionalServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ConferenceHub.Models.Booking", "Booking")
                         .WithMany("BookingServices")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ConferenceHub.Models.AdditionalService", "Service")
-                        .WithMany("BookingServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("AdditionalService");
 
                     b.Navigation("Booking");
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("ConferenceHub.Models.HallAdditionalService", b =>

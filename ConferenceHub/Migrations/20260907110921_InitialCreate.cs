@@ -94,15 +94,15 @@ namespace ConferenceHub.Migrations
                 columns: table => new
                 {
                     BookingId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    AdditionalServiceId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookingServices", x => new { x.BookingId, x.ServiceId });
+                    table.PrimaryKey("PK_BookingServices", x => new { x.BookingId, x.AdditionalServiceId });
                     table.ForeignKey(
-                        name: "FK_BookingServices_AdditionalServices_ServiceId",
-                        column: x => x.ServiceId,
+                        name: "FK_BookingServices_AdditionalServices_AdditionalServiceId",
+                        column: x => x.AdditionalServiceId,
                         principalTable: "AdditionalServices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -120,9 +120,9 @@ namespace ConferenceHub.Migrations
                 column: "HallId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookingServices_ServiceId",
+                name: "IX_BookingServices_AdditionalServiceId",
                 table: "BookingServices",
-                column: "ServiceId");
+                column: "AdditionalServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HallServices_AdditionalServiceId",
