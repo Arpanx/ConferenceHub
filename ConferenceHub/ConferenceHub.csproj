@@ -5,6 +5,9 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
 		<SpaRoot>$(MSBuildProjectDirectory)\..\ClientApp\</SpaRoot>
 		<SpaDist>$(SpaRoot)dist\ClientApp\browser\</SpaDist>
 	</PropertyGroup>
