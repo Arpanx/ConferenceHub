@@ -1,15 +1,20 @@
-﻿namespace ConferenceHub.Models.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ConferenceHub.Models.Dtos;
+
+public class UpdateHallDto
 {
-    public class UpdateHallDto
-    {
-        public string Name { get; set; } = string.Empty;
+    [Required]
+    [StringLength(100, MinimumLength = 2)]
+    public string Name { get; set; } = string.Empty;
 
-        public int Capacity { get; set; }
+    [Range(1, 10000)]
+    public int Capacity { get; set; }
 
-        public decimal BaseHourlyRate { get; set; }
+    [Range(typeof(decimal), "0.01", "1000000000")]
+    public decimal BaseHourlyRate { get; set; }
 
-        public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; } = true;
 
-        public List<int> ServiceIds { get; set; } = [];
-    }
+    public List<int> ServiceIds { get; set; } = [];
 }

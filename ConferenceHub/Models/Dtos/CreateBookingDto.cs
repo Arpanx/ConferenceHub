@@ -1,7 +1,10 @@
-﻿namespace ConferenceHub.Models.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ConferenceHub.Models.Dtos;
 
 public class CreateBookingDto
 {
+    [Range(1, int.MaxValue)]
     public int HallId { get; set; }
 
     public DateTime StartTime { get; set; }

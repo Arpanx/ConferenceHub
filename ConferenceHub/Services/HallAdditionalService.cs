@@ -30,12 +30,12 @@ public class HallAdditionalService : IHallAdditionalService
                 IsActive = x.IsActive,
 
                 Services = x.HallServices
-                    .Where(hs => hs.Service.IsActive)
+                    .Where(hs => hs.AdditionalService.IsActive)
                     .Select(hs => new ServiceDto
                     {
-                        Id = hs.Service.Id,
-                        Name = hs.Service.Name,
-                        Price = hs.Service.Price
+                        Id = hs.AdditionalService.Id,
+                        Name = hs.AdditionalService.Name,
+                        Price = hs.AdditionalService.Price
                     })
                     .ToList()
             })
@@ -58,12 +58,12 @@ public class HallAdditionalService : IHallAdditionalService
                 IsActive = x.IsActive,
 
                 Services = x.HallServices
-                    .Where(hs => hs.Service.IsActive)
+                    .Where(hs => hs.AdditionalService.IsActive)
                     .Select(hs => new ServiceDto
                     {
-                        Id = hs.Service.Id,
-                        Name = hs.Service.Name,
-                        Price = hs.Service.Price
+                        Id = hs.AdditionalService.Id,
+                        Name = hs.AdditionalService.Name,
+                        Price = hs.AdditionalService.Price
                     })
                     .ToList()
             })
@@ -86,12 +86,12 @@ public class HallAdditionalService : IHallAdditionalService
             .AsNoTracking()
             .Where(x =>
                 x.HallId == hallId &&
-                x.Service.IsActive)
+                x.AdditionalService.IsActive)
             .Select(x => new ServiceDto
             {
-                Id = x.Service.Id,
-                Name = x.Service.Name,
-                Price = x.Service.Price
+                Id = x.AdditionalService.Id,
+                Name = x.AdditionalService.Name,
+                Price = x.AdditionalService.Price
             })
             .OrderBy(x => x.Name)
             .ToListAsync(cancellationToken);
@@ -107,7 +107,7 @@ public class HallAdditionalService : IHallAdditionalService
             .Distinct()
             .ToList();
 
-        var services = await GetActiveServicesAsync(
+        var services = await GetActiveAdditionalServicesAsync(
             serviceIds,
             cancellationToken);
 
@@ -135,7 +135,7 @@ public class HallAdditionalService : IHallAdditionalService
             _context.HallServices.Add(new ConferenceHub.Models.HallService
             {
                 HallId = hall.Id,
-                ServiceId = service.Id
+                AdditionalServiceId = service.Id
             });
         }
 
@@ -168,7 +168,7 @@ public class HallAdditionalService : IHallAdditionalService
             .Distinct()
             .ToList();
 
-        var services = await GetActiveServicesAsync(
+        var services = await GetActiveAdditionalServicesAsync(
             serviceIds,
             cancellationToken);
 
@@ -190,7 +190,7 @@ public class HallAdditionalService : IHallAdditionalService
             _context.HallServices.Add(new ConferenceHub.Models.HallService
             {
                 HallId = hall.Id,
-                ServiceId = service.Id
+                AdditionalServiceId = service.Id
             });
         }
 
@@ -221,16 +221,16 @@ public class HallAdditionalService : IHallAdditionalService
         return true;
     }
 
-    private async Task<List<AdditionalService>> GetActiveServicesAsync(
+    private async Task<List<AdditionalService>> GetActiveAdditionalServicesAsync(
         List<int> serviceIds,
         CancellationToken cancellationToken)
     {
         if (serviceIds.Count == 0)
         {
-            return [];
+            return new List<AdditionalService>();
         }
 
-        return await _context.Services
+        return await _context.AdditionalServices
             .Where(x =>
                 serviceIds.Contains(x.Id) &&
                 x.IsActive)
@@ -311,12 +311,12 @@ public class HallAdditionalService : IHallAdditionalService
                 IsActive = hall.IsActive,
 
                 Services = hall.HallServices
-                    .Where(x => x.Service.IsActive)
+                    .Where(x => x.AdditionalService.IsActive)
                     .Select(x => new ServiceDto
                     {
-                        Id = x.Service.Id,
-                        Name = x.Service.Name,
-                        Price = x.Service.Price
+                        Id = x.AdditionalService.Id,
+                        Name = x.AdditionalService.Name,
+                        Price = x.AdditionalService.Price
                     })
                     .ToList()
             })

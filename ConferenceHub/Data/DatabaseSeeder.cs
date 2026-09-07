@@ -40,7 +40,7 @@ public static class DatabaseSeeder
             IsActive = true
         };
 
-        context.Services.AddRange(
+        context.AdditionalServices.AddRange(
             projector,
             wifi,
             sound);

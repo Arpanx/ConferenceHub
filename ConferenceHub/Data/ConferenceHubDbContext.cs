@@ -12,7 +12,7 @@ public class ConferenceHubDbContext : DbContext
 
     public DbSet<Hall> Halls => Set<Hall>();
 
-    public DbSet<AdditionalService> Services => Set<AdditionalService>();
+    public DbSet<AdditionalService> AdditionalServices => Set<AdditionalService>();
 
     public DbSet<HallService> HallServices => Set<HallService>();
 
