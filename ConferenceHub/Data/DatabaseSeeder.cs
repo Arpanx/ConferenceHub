@@ -88,51 +88,51 @@ public static class DatabaseSeeder
 
         context.HallServices.AddRange(
             // Зал А
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallA.Id,
                 ServiceId = projector.Id
             },
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallA.Id,
                 ServiceId = wifi.Id
             },
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallA.Id,
                 ServiceId = sound.Id
             },
 
             // Зал B
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallB.Id,
                 ServiceId = projector.Id
             },
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallB.Id,
                 ServiceId = wifi.Id
             },
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallB.Id,
                 ServiceId = sound.Id
             },
 
             // Зал C
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallC.Id,
                 ServiceId = projector.Id
             },
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallC.Id,
                 ServiceId = wifi.Id
             },
-            new HallService
+            new HallAdditionalService
             {
                 HallId = hallC.Id,
                 ServiceId = sound.Id

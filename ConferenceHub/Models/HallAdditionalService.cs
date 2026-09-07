@@ -1,6 +1,6 @@
 ﻿namespace ConferenceHub.Models;
 
-public class HallService
+public class HallAdditionalService
 {
     public int HallId { get; set; }
 

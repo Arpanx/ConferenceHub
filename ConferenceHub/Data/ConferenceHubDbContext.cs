@@ -14,7 +14,7 @@ public class ConferenceHubDbContext : DbContext
 
     public DbSet<AdditionalService> AdditionalServices => Set<AdditionalService>();
 
-    public DbSet<HallService> HallServices => Set<HallService>();
+    public DbSet<HallAdditionalService> HallServices => Set<HallAdditionalService>();
 
     public DbSet<Booking> Bookings => Set<Booking>();
 
@@ -40,19 +40,19 @@ public class ConferenceHubDbContext : DbContext
             .Property(x => x.Price)
             .HasPrecision(18, 2);
 
-        modelBuilder.Entity<HallService>()
+        modelBuilder.Entity<HallAdditionalService>()
             .HasKey(x => new
             {
                 x.HallId,
                 x.ServiceId
             });
 
-        modelBuilder.Entity<HallService>()
+        modelBuilder.Entity<HallAdditionalService>()
             .HasOne(x => x.Hall)
             .WithMany(x => x.HallServices)
             .HasForeignKey(x => x.HallId);
 
-        modelBuilder.Entity<HallService>()
+        modelBuilder.Entity<HallAdditionalService>()
             .HasOne(x => x.Service)
             .WithMany(x => x.HallServices)
             .HasForeignKey(x => x.ServiceId);

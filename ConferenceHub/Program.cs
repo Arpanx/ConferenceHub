@@ -23,7 +23,7 @@ else
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IHallAdditionalService, HallAdditionalService>();
+builder.Services.AddScoped<IHallService, HallService>();
 
 builder.Services.AddScoped<IBookingAdditionaService, BookingService>();
 builder.Services.AddScoped<IPricingService, PricingService>();

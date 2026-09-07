@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceHub.Services;
 
-public class HallAdditionalService : IHallAdditionalService
+public class HallService : IHallService
 {
     private readonly ConferenceHubDbContext _context;
 
-    public HallAdditionalService(ConferenceHubDbContext context)
+    public HallService(ConferenceHubDbContext context)
     {
         _context = context;
     }
@@ -132,7 +132,7 @@ public class HallAdditionalService : IHallAdditionalService
 
         foreach (var service in services)
         {
-            _context.HallServices.Add(new ConferenceHub.Models.HallService
+            _context.HallServices.Add(new ConferenceHub.Models.HallAdditionalService
             {
                 HallId = hall.Id,
                 AdditionalServiceId = service.Id
@@ -187,7 +187,7 @@ public class HallAdditionalService : IHallAdditionalService
 
         foreach (var service in services)
         {
-            _context.HallServices.Add(new ConferenceHub.Models.HallService
+            _context.HallServices.Add(new ConferenceHub.Models.HallAdditionalService
             {
                 HallId = hall.Id,
                 AdditionalServiceId = service.Id

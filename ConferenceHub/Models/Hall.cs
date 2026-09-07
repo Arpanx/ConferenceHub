@@ -12,7 +12,7 @@
 
         public bool IsActive { get; set; } = true;
 
-        public ICollection<HallService> HallServices { get; set; } = new List<HallService>();
+        public ICollection<HallAdditionalService> HallServices { get; set; } = new List<HallAdditionalService>();
 
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }

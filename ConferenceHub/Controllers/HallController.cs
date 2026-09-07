@@ -11,9 +11,9 @@ namespace ConferenceHub.Controllers;
 [Route("api/[controller]")]
 public class HallController : ControllerBase
 {
-    private readonly IHallAdditionalService _hallService;
+    private readonly IHallService _hallService;
 
-    public HallController(IHallAdditionalService hallService)
+    public HallController(IHallService hallService)
     {
         _hallService = hallService;
     }
