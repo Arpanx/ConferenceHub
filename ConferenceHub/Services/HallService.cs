@@ -101,8 +101,6 @@ public class HallService : IHallService
         CreateHallDto model,
         CancellationToken cancellationToken = default)
     {
-        ValidateHall(model.Name, model.Capacity, model.BaseHourlyRate);
-
         var serviceIds = model.ServiceIds
             .Distinct()
             .ToList();
@@ -151,8 +149,6 @@ public class HallService : IHallService
         UpdateHallDto model,
         CancellationToken cancellationToken = default)
     {
-        ValidateHall(model.Name, model.Capacity, model.BaseHourlyRate);
-
         var hall = await _context.Halls
             .Include(x => x.HallServices)
             .FirstOrDefaultAsync(
@@ -235,33 +231,6 @@ public class HallService : IHallService
                 serviceIds.Contains(x.Id) &&
                 x.IsActive)
             .ToListAsync(cancellationToken);
-    }
-
-    private static void ValidateHall(
-        string name,
-        int capacity,
-        decimal baseHourlyRate)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new BusinessException(
-                "Hall name is required.",
-                "INVALID_HALL_NAME");
-        }
-
-        if (capacity <= 0)
-        {
-            throw new BusinessException(
-               "Capacity must be greater than zero.",
-               "INVALID_HALL_CAPACITY");
-        }
-
-        if (baseHourlyRate < 0)
-        {
-            throw new BusinessException(
-                "Base hourly rate cannot be negative.",
-                "INVALID_HALL_PRICE");
-        }
     }
 
     public async Task<List<HallDto>> GetAvailableAsync(
