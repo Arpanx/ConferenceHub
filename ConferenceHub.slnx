@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="ConferenceHub.Tests/ConferenceHub.Tests.csproj" />
   <Project Path="ConferenceHub/ConferenceHub.csproj" />
 </Solution>

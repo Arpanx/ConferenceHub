@@ -1,6 +1,236 @@
-@ConferenceHub_HostAddress = http://localhost:5043
+@host = https://localhost:7154
 
-GET {{ConferenceHub_HostAddress}}/weatherforecast/
+### ============================================
+### HALLS
+### ============================================
+
+### Получить все залы
+GET {{host}}/api/Hall
 Accept: application/json
 
-###
+
+### Получить зал по ID
+GET {{host}}/api/Hall/1
+Accept: application/json
+
+
+### Получить услуги зала
+GET {{host}}/api/Hall/1/services
+Accept: application/json
+
+
+### ============================================
+### CREATE HALL
+### ============================================
+
+### Создать новый зал
+POST {{host}}/api/Hall
+Content-Type: application/json
+
+{
+  "name": "Зал D",
+  "capacity": 70,
+  "baseHourlyRate": 2500,
+  "serviceIds": [1, 2, 3]
+}
+
+
+### ============================================
+### UPDATE HALL
+### ============================================
+
+### Изменить зал
+PUT {{host}}/api/Hall/1
+Content-Type: application/json
+
+{
+  "name": "Зал А Updated",
+  "capacity": 60,
+  "baseHourlyRate": 2200,
+  "isActive": true,
+  "serviceIds": [1, 2]
+}
+
+
+### ============================================
+### DELETE HALL
+### ============================================
+
+### Удалить (деактивировать) зал
+DELETE {{host}}/api/Hall/1
+
+
+### ============================================
+### BOOKINGS
+### ============================================
+
+### Создать бронирование
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-07T10:00:00",
+  "duration": "02:00:00",
+  "serviceIds": [1, 2]
+}
+
+
+### ============================================
+### BOOKING - PEAK TARIFF 12:00-14:00
+### ============================================
+
+### Зал А: 12:00-14:00
+### 2000 * 2 * 1.15 = 4600
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-08T12:00:00",
+  "duration": "02:00:00",
+  "serviceIds": []
+}
+
+
+### ============================================
+### BOOKING - DISCOUNT 18:00-23:00
+### ============================================
+
+### Зал А: 18:00-20:00
+### 2000 * 2 * 0.80 = 3200
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-08T18:00:00",
+  "duration": "02:00:00",
+  "serviceIds": []
+}
+
+
+### ============================================
+### BOOKING - DISCOUNT 06:00-09:00
+### ============================================
+
+### Зал А: 06:00-08:00
+### 2000 * 2 * 0.90 = 3600
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-09T06:00:00",
+  "duration": "02:00:00",
+  "serviceIds": []
+}
+
+
+### ============================================
+### BOOKING - CROSSING TARIFF PERIODS
+### ============================================
+
+### Зал А: 11:00-15:00
+### 11-12 = 2000
+### 12-14 = 2000 * 1.15 * 2
+### 14-15 = 2000
+### Итого = 8600
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-10T11:00:00",
+  "duration": "04:00:00",
+  "serviceIds": []
+}
+
+
+### ============================================
+### BOOKING - OVERLAP TEST
+### ============================================
+
+### Должно вернуть 409 Conflict,
+### если предыдущая бронь ещё существует
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-10T12:00:00",
+  "duration": "01:00:00",
+  "serviceIds": []
+}
+
+
+### ============================================
+### INVALID BOOKING
+### ============================================
+
+### Несуществующий зал -> 404
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 999,
+  "startTime": "2026-09-11T10:00:00",
+  "duration": "02:00:00",
+  "serviceIds": []
+}
+
+
+### Нулевая продолжительность -> 400
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 1,
+  "startTime": "2026-09-11T10:00:00",
+  "duration": "00:00:00",
+  "serviceIds": []
+}
+
+### Некорректный зал
+POST {{host}}/api/Hall
+Content-Type: application/json
+
+{
+  "name": "",
+  "capacity": -10,
+  "baseHourlyRate": 0,
+  "serviceIds": []
+}
+
+### Слишком короткое имя
+POST {{host}}/api/Hall
+Content-Type: application/json
+
+{
+  "name": "A",
+  "capacity": 50,
+  "baseHourlyRate": 2000,
+  "serviceIds": []
+}
+
+### Некорректный HallId
+POST {{host}}/api/Booking
+Content-Type: application/json
+
+{
+  "hallId": 0,
+  "startTime": "2026-09-25T10:00:00",
+  "duration": "02:00:00",
+  "serviceIds": []
+}
+
+### Корректный зал
+POST {{host}}/api/Hall
+Content-Type: application/json
+
+{
+  "name": "Зал Test",
+  "capacity": 50,
+  "baseHourlyRate": 2000,
+  "serviceIds": [1, 2]
+}

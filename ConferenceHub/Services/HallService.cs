@@ -170,8 +170,9 @@ public class HallService : IHallService
 
         if (services.Count != serviceIds.Count)
         {
-            throw new ArgumentException(
-                "One or more services do not exist or are inactive.");
+            throw new BusinessException(
+                "One or more services do not exist or are inactive.",
+                "INVALID_SERVICES");
         }
 
         hall.Name = model.Name.Trim();
