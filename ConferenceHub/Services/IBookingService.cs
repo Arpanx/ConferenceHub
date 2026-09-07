@@ -2,7 +2,7 @@
 
 namespace ConferenceHub.Services;
 
-public interface IBookingAdditionaService
+public interface IBookingService
 {
     Task<BookingDto> CreateAsync(
         CreateBookingDto model,

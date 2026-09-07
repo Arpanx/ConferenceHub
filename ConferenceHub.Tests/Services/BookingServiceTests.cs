@@ -231,11 +231,11 @@ public class BookingServiceTests
 
         Assert.Contains(
             booking.BookingServices,
-            x => x.ServiceId == 1 && x.Price == 500m);
+            x => x.AdditionalServiceId == 1 && x.Price == 500m);
 
         Assert.Contains(
             booking.BookingServices,
-            x => x.ServiceId == 2 && x.Price == 300m);
+            x => x.AdditionalServiceId == 2 && x.Price == 300m);
     }
 
     [Fact]

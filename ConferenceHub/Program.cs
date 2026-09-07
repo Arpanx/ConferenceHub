@@ -25,13 +25,11 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IHallService, HallService>();
 
-builder.Services.AddScoped<IBookingAdditionaService, BookingService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IPricingService, PricingService>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-
-builder.Services.AddOpenApi();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -67,7 +65,6 @@ if (app.Environment.IsDevelopment())
     // https://localhost:7154/swagger
     app.UseSwagger();
     app.UseSwaggerUI();
-    //app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();

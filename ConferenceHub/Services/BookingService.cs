@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConferenceHub.Services;
 
-public class BookingService : IBookingAdditionaService
+public class BookingService : IBookingService
 {
     private readonly ConferenceHubDbContext _context;
     private readonly IPricingService _pricingService;
@@ -147,7 +147,7 @@ public class BookingService : IBookingAdditionaService
             booking.BookingServices.Add(
                 new ConferenceHub.Models.BookingAdditionalService
                 {
-                    ServiceId = service.Id,
+                    AdditionalServiceId = service.Id,
                     Price = service.Price
                 });
         }

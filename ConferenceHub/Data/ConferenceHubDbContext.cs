@@ -62,7 +62,7 @@ public class ConferenceHubDbContext : DbContext
             .HasKey(x => new
             {
                 x.BookingId,
-                x.ServiceId
+                x.AdditionalServiceId
             });
 
         modelBuilder.Entity<BookingAdditionalService>()
@@ -71,8 +71,8 @@ public class ConferenceHubDbContext : DbContext
             .HasForeignKey(x => x.BookingId);
 
         modelBuilder.Entity<BookingAdditionalService>()
-            .HasOne(x => x.Service)
+            .HasOne(x => x.AdditionalService)
             .WithMany(x => x.BookingServices)
-            .HasForeignKey(x => x.ServiceId);
+            .HasForeignKey(x => x.AdditionalServiceId);
     }
 }

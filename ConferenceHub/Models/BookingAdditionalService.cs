@@ -6,9 +6,9 @@
 
         public Booking Booking { get; set; } = null!;
 
-        public int ServiceId { get; set; }
+        public int AdditionalServiceId { get; set; }
 
-        public AdditionalService Service { get; set; } = null!;
+        public AdditionalService AdditionalService { get; set; } = null!;
 
         public decimal Price { get; set; }
     }

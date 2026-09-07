@@ -9,12 +9,12 @@ namespace ConferenceHub.Tests.Controllers;
 
 public class BookingControllerTests
 {
-    private readonly Mock<IBookingAdditionaService> _bookingServiceMock;
+    private readonly Mock<IBookingService> _bookingServiceMock;
     private readonly BookingController _controller;
 
     public BookingControllerTests()
     {
-        _bookingServiceMock = new Mock<IBookingAdditionaService>();
+        _bookingServiceMock = new Mock<IBookingService>();
         _controller = new BookingController(
             _bookingServiceMock.Object);
     }
