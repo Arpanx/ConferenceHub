@@ -1,4 +1,6 @@
-﻿namespace ConferenceHub.Services;
+﻿using ConferenceHub.Exceptions;
+
+namespace ConferenceHub.Services;
 
 public class PricingService : IPricingService
 {
@@ -9,8 +11,9 @@ public class PricingService : IPricingService
     {
         if (endTime <= startTime)
         {
-            throw new ArgumentException(
-                "End time must be greater than start time.");
+            throw new BusinessException(
+                "Booking end time must be greater than start time.",
+                "INVALID_TIME_RANGE");
         }
 
         decimal total = 0m;

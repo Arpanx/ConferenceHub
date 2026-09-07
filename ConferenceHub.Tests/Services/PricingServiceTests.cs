@@ -1,4 +1,5 @@
-﻿using ConferenceHub.Services;
+﻿using ConferenceHub.Exceptions;
+using ConferenceHub.Services;
 
 namespace ConferenceHub.Tests.Services;
 
@@ -99,7 +100,7 @@ public class PricingServiceTests
         var endTime = new DateTime(2026, 9, 7, 10, 0, 0);
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<BusinessException>(() =>
             _pricingService.CalculateRoomCost(
                 2000m,
                 startTime,
