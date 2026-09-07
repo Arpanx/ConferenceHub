@@ -8,6 +8,6 @@
 
         public int ServiceId { get; set; }
 
-        public Service Service { get; set; } = null!;
+        public AdditionalService Service { get; set; } = null!;
     }
 }

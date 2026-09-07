@@ -19,21 +19,21 @@ public static class DatabaseSeeder
         // Services
         // =========================
 
-        var projector = new Service
+        var projector = new AdditionalService
         {
             Name = "Проєктор",
             Price = 500m,
             IsActive = true
         };
 
-        var wifi = new Service
+        var wifi = new AdditionalService
         {
             Name = "Wi-Fi",
             Price = 300m,
             IsActive = true
         };
 
-        var sound = new Service
+        var sound = new AdditionalService
         {
             Name = "Звук",
             Price = 700m,

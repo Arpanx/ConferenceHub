@@ -221,7 +221,7 @@ public class HallService : IHallService
         return true;
     }
 
-    private async Task<List<Service>> GetActiveServicesAsync(
+    private async Task<List<AdditionalService>> GetActiveServicesAsync(
         List<int> serviceIds,
         CancellationToken cancellationToken)
     {

@@ -1,6 +1,6 @@
 ﻿namespace ConferenceHub.Models
 {
-    public class Service
+    public class AdditionalService
     {
         public int Id { get; set; }
 

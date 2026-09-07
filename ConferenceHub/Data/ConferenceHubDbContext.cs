@@ -12,7 +12,7 @@ public class ConferenceHubDbContext : DbContext
 
     public DbSet<Hall> Halls => Set<Hall>();
 
-    public DbSet<Service> Services => Set<Service>();
+    public DbSet<AdditionalService> Services => Set<AdditionalService>();
 
     public DbSet<HallService> HallServices => Set<HallService>();
 
@@ -28,7 +28,7 @@ public class ConferenceHubDbContext : DbContext
             .Property(x => x.BaseHourlyRate)
             .HasPrecision(18, 2);
 
-        modelBuilder.Entity<Service>()
+        modelBuilder.Entity<AdditionalService>()
             .Property(x => x.Price)
             .HasPrecision(18, 2);
 
