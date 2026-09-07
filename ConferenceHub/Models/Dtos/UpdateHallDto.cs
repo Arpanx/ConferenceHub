@@ -11,7 +11,7 @@ public class UpdateHallDto
     [Range(1, 10000)]
     public int Capacity { get; set; }
 
-    [Range(typeof(decimal), "0.01", "1000000000")]
+    [Range(0.01, 1000000000)]
     public decimal BaseHourlyRate { get; set; }
 
     public bool IsActive { get; set; } = true;
