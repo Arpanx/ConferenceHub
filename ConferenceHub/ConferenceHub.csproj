@@ -5,33 +5,38 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
 		<SpaRoot>$(MSBuildProjectDirectory)\..\ClientApp\</SpaRoot>
 		<SpaDist>$(SpaRoot)dist\ClientApp\browser\</SpaDist>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
 	</ItemGroup>
 
 	<!-- Build Angular before publishing -->
 	<Target Name="BuildAngular" BeforeTargets="Publish">
 
-		<Message Importance="high"
-				 Text="========== Building Angular application ==========" />
+		<Message Importance="high" Text="========== Building Angular application ==========" />
 
-		<Exec
-		  Command="npm.cmd install"
-		  WorkingDirectory="$(SpaRoot)" />
+		<Exec Command="npm.cmd install" WorkingDirectory="$(SpaRoot)" />
 
-		<Exec
-		  Command="ng.cmd build --configuration production"
-		  WorkingDirectory="$(SpaRoot)" />
+		<Exec Command="ng.cmd build --configuration production" WorkingDirectory="$(SpaRoot)" />
 
 	</Target>
 
 	<!-- Include Angular files in ASP.NET Core publish -->
-	<Target Name="IncludeAngularInPublish"
-			AfterTargets="BuildAngular">
+	<Target Name="IncludeAngularInPublish" AfterTargets="BuildAngular">
 
 		<ItemGroup>
 

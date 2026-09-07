@@ -1,0 +1,335 @@
+﻿using ConferenceHub.Data;
+using ConferenceHub.Exceptions;
+using ConferenceHub.Models;
+using ConferenceHub.Models.Dtos;
+using Microsoft.EntityFrameworkCore;
+
+namespace ConferenceHub.Services;
+
+public class HallService : IHallService
+{
+    private readonly ConferenceHubDbContext _context;
+
+    public HallService(ConferenceHubDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<List<HallDto>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Halls
+            .AsNoTracking()
+            .OrderBy(x => x.Name)
+            .Select(x => new HallDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Capacity = x.Capacity,
+                BaseHourlyRate = x.BaseHourlyRate,
+                IsActive = x.IsActive,
+
+                Services = x.HallServices
+                    .Where(hs => hs.AdditionalService.IsActive)
+                    .Select(hs => new ServiceDto
+                    {
+                        Id = hs.AdditionalService.Id,
+                        Name = hs.AdditionalService.Name,
+                        Price = hs.AdditionalService.Price
+                    })
+                    .ToList()
+            })
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<HallDto?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Halls
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new HallDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Capacity = x.Capacity,
+                BaseHourlyRate = x.BaseHourlyRate,
+                IsActive = x.IsActive,
+
+                Services = x.HallServices
+                    .Where(hs => hs.AdditionalService.IsActive)
+                    .Select(hs => new ServiceDto
+                    {
+                        Id = hs.AdditionalService.Id,
+                        Name = hs.AdditionalService.Name,
+                        Price = hs.AdditionalService.Price
+                    })
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<List<ServiceDto>?> GetServicesAsync(
+        int hallId,
+        CancellationToken cancellationToken = default)
+    {
+        var hallExists = await _context.Halls
+            .AnyAsync(x => x.Id == hallId, cancellationToken);
+
+        if (!hallExists)
+        {
+            return null;
+        }
+
+        return await _context.HallServices
+            .AsNoTracking()
+            .Where(x =>
+                x.HallId == hallId &&
+                x.AdditionalService.IsActive)
+            .Select(x => new ServiceDto
+            {
+                Id = x.AdditionalService.Id,
+                Name = x.AdditionalService.Name,
+                Price = x.AdditionalService.Price
+            })
+            .OrderBy(x => x.Name)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<HallDto> CreateAsync(
+        CreateHallDto model,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateHall(
+           model.Name,
+           model.Capacity,
+           model.BaseHourlyRate);
+
+
+        var serviceIds = model.ServiceIds
+            .Distinct()
+            .ToList();
+
+        var services = await GetActiveAdditionalServicesAsync(
+            serviceIds,
+            cancellationToken);
+
+        if (services.Count != serviceIds.Count)
+        {
+            throw new BusinessException(
+                "One or more services do not exist or are inactive.",
+                "INVALID_SERVICES");
+        }
+
+        var hall = new Hall
+        {
+            Name = model.Name.Trim(),
+            Capacity = model.Capacity,
+            BaseHourlyRate = model.BaseHourlyRate,
+            IsActive = true
+        };
+
+        _context.Halls.Add(hall);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        foreach (var service in services)
+        {
+            _context.HallServices.Add(new ConferenceHub.Models.HallAdditionalService
+            {
+                HallId = hall.Id,
+                AdditionalServiceId = service.Id
+            });
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return await GetByIdAsync(hall.Id, cancellationToken)
+               ?? throw new InvalidOperationException(
+                   "The hall was created but could not be loaded.");
+    }
+
+    public async Task<HallDto?> UpdateAsync(
+        int id,
+        UpdateHallDto model,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateHall(
+            model.Name,
+            model.Capacity,
+            model.BaseHourlyRate);
+
+        var hall = await _context.Halls
+            .Include(x => x.HallServices)
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
+
+        if (hall is null)
+        {
+            return null;
+        }
+
+        var serviceIds = model.ServiceIds
+            .Distinct()
+            .ToList();
+
+        var services = await GetActiveAdditionalServicesAsync(
+            serviceIds,
+            cancellationToken);
+
+        if (services.Count != serviceIds.Count)
+        {
+            throw new BusinessException(
+                "One or more services do not exist or are inactive.",
+                "INVALID_SERVICES");
+        }
+
+        hall.Name = model.Name.Trim();
+        hall.Capacity = model.Capacity;
+        hall.BaseHourlyRate = model.BaseHourlyRate;
+        hall.IsActive = model.IsActive;
+
+        _context.HallServices.RemoveRange(hall.HallServices);
+
+        foreach (var service in services)
+        {
+            _context.HallServices.Add(new ConferenceHub.Models.HallAdditionalService
+            {
+                HallId = hall.Id,
+                AdditionalServiceId = service.Id
+            });
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return await GetByIdAsync(id, cancellationToken);
+    }
+
+    public async Task<bool> DeleteAsync(
+        int id,
+        CancellationToken cancellationToken = default)
+    {
+        var hall = await _context.Halls
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
+
+        if (hall is null)
+        {
+            return false;
+        }
+
+        // Soft delete.
+        hall.IsActive = false;
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
+    private async Task<List<AdditionalService>> GetActiveAdditionalServicesAsync(
+        List<int> serviceIds,
+        CancellationToken cancellationToken)
+    {
+        if (serviceIds.Count == 0)
+        {
+            return new List<AdditionalService>();
+        }
+
+        return await _context.AdditionalServices
+            .Where(x =>
+                serviceIds.Contains(x.Id) &&
+                x.IsActive)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<HallDto>> GetAvailableAsync(
+        DateTime startTime,
+        TimeSpan duration,
+        int capacity,
+        CancellationToken cancellationToken = default)
+    {
+        if (duration <= TimeSpan.Zero)
+        {
+            throw new BusinessException(
+                "Booking duration must be greater than zero.",
+                "INVALID_DURATION");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new BusinessException(
+                "Capacity must be greater than zero.",
+                "INVALID_CAPACITY");
+        }
+
+        var endTime = startTime + duration;
+
+        if (endTime <= startTime)
+        {
+            throw new BusinessException(
+                "Booking end time must be greater than start time.",
+                "INVALID_TIME_RANGE");
+        }
+
+        var halls = await _context.Halls
+            .Where(x =>
+                x.IsActive &&
+                x.Capacity >= capacity)
+            .Where(hall =>
+                !_context.Bookings.Any(booking =>
+                    booking.HallId == hall.Id &&
+                    booking.StartTime < endTime &&
+                    booking.EndTime > startTime))
+            .Select(hall => new HallDto
+            {
+                Id = hall.Id,
+                Name = hall.Name,
+                Capacity = hall.Capacity,
+                BaseHourlyRate = hall.BaseHourlyRate,
+                IsActive = hall.IsActive,
+
+                Services = hall.HallServices
+                    .Where(x => x.AdditionalService.IsActive)
+                    .Select(x => new ServiceDto
+                    {
+                        Id = x.AdditionalService.Id,
+                        Name = x.AdditionalService.Name,
+                        Price = x.AdditionalService.Price
+                    })
+                    .ToList()
+            })
+            .ToListAsync(cancellationToken);
+
+        return halls;
+    }
+
+    private static void ValidateHall(
+        string name,
+        int capacity,
+        decimal baseHourlyRate)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new BusinessException(
+                "Hall name is required.",
+                "INVALID_HALL_NAME");
+        }
+
+        if (capacity <= 0)
+        {
+            throw new BusinessException(
+               "Capacity must be greater than zero.",
+               "INVALID_HALL_CAPACITY");
+        }
+
+        if (baseHourlyRate < 0)
+        {
+            throw new BusinessException(
+                "Base hourly rate cannot be negative.",
+                "INVALID_HALL_PRICE");
+        }
+    }
+}
