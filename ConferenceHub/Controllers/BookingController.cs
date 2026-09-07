@@ -23,6 +23,7 @@ public class BookingController : ControllerBase
     /// Створити нове бронювання конференц-залу.
     /// </summary>
     /// <param name="model">Дані для створення бронювання.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <returns>Створене бронювання з інформацією про вартість.</returns>
     /// <response code="200">Бронювання успішно створено.</response>
     /// <response code="400">Передано некоректні дані.</response>

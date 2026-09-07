@@ -37,6 +37,7 @@ public class HallController : ControllerBase
     /// Отримати конференц-зал за ідентифікатором.
     /// </summary>
     /// <param name="id">Ідентифікатор залу.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <returns>Інформація про конференц-зал.</returns>
     /// <response code="200">Зал знайдено.</response>
     /// <response code="404">Зал із вказаним ідентифікатором не знайдено.</response>
@@ -63,6 +64,7 @@ public class HallController : ControllerBase
     /// Отримати список послуг, доступних у конференц-залі.
     /// </summary>
     /// <param name="id">Ідентифікатор залу.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <returns>Список доступних послуг.</returns>
     /// <response code="200">Список послуг успішно отримано.</response>
     /// <response code="404">Зал не знайдено.</response>
@@ -89,6 +91,7 @@ public class HallController : ControllerBase
     /// Створити новий конференц-зал.
     /// </summary>
     /// <param name="model">Дані нового конференц-залу.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <returns>Створений конференц-зал.</returns>
     /// <response code="201">Зал успішно створено.</response>
     /// <response code="400">Передано некоректні дані.</response>
@@ -114,6 +117,7 @@ public class HallController : ControllerBase
     /// </summary>
     /// <param name="id">Ідентифікатор залу.</param>
     /// <param name="model">Нові дані залу.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <returns>Оновлений конференц-зал.</returns>
     /// <response code="200">Зал успішно оновлено.</response>
     /// <response code="400">Передано некоректні дані.</response>
@@ -144,6 +148,7 @@ public class HallController : ControllerBase
     /// Деактивувати конференц-зал.
     /// </summary>
     /// <param name="id">Ідентифікатор залу.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <response code="204">Зал успішно деактивовано.</response>
     /// <response code="404">Зал не знайдено.</response>
     [HttpDelete("{id:int}")]
@@ -172,6 +177,7 @@ public class HallController : ControllerBase
     /// <param name="startTime">Дата та час початку бронювання.</param>
     /// <param name="duration">Тривалість бронювання.</param>
     /// <param name="capacity">Мінімально необхідна місткість залу.</param>
+    /// <param name="cancellationToken">Токен скасування операції.</param>
     /// <returns>Список доступних конференц-залів.</returns>
     /// <response code="200">Список доступних залів успішно отримано.</response>
     /// <response code="400">Передано некоректні параметри пошуку.</response>
