@@ -5,7 +5,8 @@ namespace ConferenceHub.Data;
 
 public class ConferenceHubDbContext : DbContext
 {
-    public ConferenceHubDbContext(DbContextOptions<ConferenceHubDbContext> options)
+    public ConferenceHubDbContext(
+        DbContextOptions<ConferenceHubDbContext> options)
         : base(options)
     {
     }
